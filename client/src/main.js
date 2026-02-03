@@ -4,6 +4,7 @@ const entries = document.querySelector("#entries")
 const totalMgDisplay = document.querySelector("#total-mg")
 const warning = document.querySelector("#warning")
 
+
 const dbURL = `http://localhost:3000`
 
 async function fetchDrinks (){ 
@@ -15,19 +16,50 @@ async function fetchDrinks (){
 
 }
 
+const presetLabel = document.createElement("label");
+presetLabel.textContent = "Choose a drink:";
+presetLabel.setAttribute("for", "preset");
+
+const selectPreset = document.createElement("select")
+selectPreset.id = 'preset' 
+
+const defaultOption = document.createElement("option")
+defaultOption.value = ""
+defaultOption.textContent = "-- Select a drink --"
+selectPreset.appendChild(defaultOption)
+
+form.prepend(selectPreset);
+form.prepend(presetLabel);
+
 async function formSubmission (event){
     event.preventDefault() 
 
+    const selectedPresetId = selectPreset.value;
     const formData = new FormData(form)
     const input = Object.fromEntries(formData)
-    const inputJSON = JSON.stringify(input)
+
+     let submission;
+
+  if (selectedPresetId) {
+    
+    submission = { drink_id: Number(selectedPresetId) };
+  } else if (input.drink_name && input.caffeine_mg) {
+
+    submission = {
+      custom_name: input.drink_name,
+      custom_caffeine_mg: Number(input.caffeine_mg)
+    };
+  } else {
+    alert("Please select a drink or enter a custom drink!");
+    return;
+  }
 
     const post = await fetch(`${dbURL}/api/drinks`, {
     headers: {
       "Content-Type" : "application/json"
     },
     method: "POST",
-    body: inputJSON
+    body: JSON.stringify(submission)
   })
   window.location.reload()
 
@@ -68,6 +100,8 @@ async function displayStats() {
   }
 }
 
+displayStats()
+
 async function fetchPresets() {
     const data = await fetch(`${dbURL}/api/drinks/presets`);
     const presets = await data.json()
@@ -75,3 +109,18 @@ async function fetchPresets() {
 
     return presets
 }
+
+async function loadPresets() {
+
+  const presets = await fetchPresets()
+
+    presets.forEach(drink => {
+      const option = document.createElement("option");
+      option.value = drink.id; 
+      option.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
+      selectPreset.appendChild(option);
+    });
+  
+}
+
+loadPresets()
