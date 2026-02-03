@@ -5,10 +5,34 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>client</title>
-  </head>
-  <body>
-    <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   <link rel="stylesheet" href="src/style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Caffeine Tracker</h1>
+    </header>
+
+    <main class="container">
+    <div id="total-section">
+      <h2>Total caffeine: <span id="total-mg">0</span> mg</h2>
+      <p id="warning">WARNING!! you   exceeded the recommended limit!</p>
+    </div>
+      <div id="drink">
+        <h2>Add a Drink</h2>
+        <form id="form">
+          <label for="drink_name">Drink Name:</label>
+          <input type="text" id="drink_name" name="drink_name"/>
+          <label for="caffeine_mg">Caffeine (mg):</label>
+          <input type="text" id="caffeine_mg" name="caffeine_mg"/>
+          <button type="submit">Add drink</button>
+        </form>
+      </div>
+      <div id="drinks">
+        <h2>Today's Drinks:</h2>
+        <div id="entries"></div>
+      </div>
+    </div>
+    </main>
   </body>
 </html>
