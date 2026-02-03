@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
     if (custom_name && custom_caffeine_mg) {
       // Check if this custom drink already exists
       const existing = await pool.query(
-        "SELECT id FROM drinks WHERE name = £1 AND is_custom = true",
+        "SELECT id FROM drinks WHERE name = $1 AND is_custom = true",
         [custom_name],
       );
 
@@ -59,7 +59,7 @@ router.post("/", async (req, res) => {
       } else {
         // Create new custom drink
         const newDrink = await pool.query(
-          "INSERT INTO drinks (name, caffeine_mg, is_custom) VALUES (£1, £2, true) RETURNING id",
+          "INSERT INTO drinks (name, caffeine_mg, is_custom) VALUES ($1, $2, true) RETURNING id",
           [custom_name, custom_caffeine_mg],
         );
         finalDrinkId = newDrink.rows[0].id;
@@ -75,7 +75,7 @@ router.post("/", async (req, res) => {
 
     // Log the drink in intake_logs
     const result = await pool.query(
-      "INSERT INTO intake_logs (drink_id) VALUES (£1) RETURNING *",
+      "INSERT INTO intake_logs (drink_id) VALUES ($1) RETURNING *",
       [finalDrinkId],
     );
 
@@ -90,7 +90,7 @@ router.post("/", async (req, res) => {
         drinks.is_custom
       FROM intake_logs
       JOIN drinks ON intake_logs.drink_id = drinks.id
-      WHERE intake_logs.id = £1
+      WHERE intake_logs.id = $1
     `,
       [result.rows[0].id],
     );
@@ -145,3 +145,4 @@ router.get("/stats/today", async (req, res) => {
 });
 
 export default router;
+
