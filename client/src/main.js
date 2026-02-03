@@ -1,4 +1,3 @@
-
 const form = document.getElementById('form')
 const entries = document.querySelector("#entries")
 const totalMgDisplay = document.querySelector("#total-mg")
@@ -81,6 +80,7 @@ async function displayDrinks() {
 
 displayDrinks();
 
+const dailyLimit = 400;
 
 async function fetchStats() {
   const data = await fetch(`${dbURL}/api/drinks/stats/today`);
@@ -93,11 +93,27 @@ async function displayStats() {
   const stats = await fetchStats();
   totalMgDisplay.textContent = stats.total_caffeine;
 
-  if (stats.total_caffeine > 400) {
+  const percentage = (stats.total_caffeine / dailyLimit) * 100;
+  const cappedPercentage = Math.min (percentage, 100)
+
+  if (percentage >= 100) {
     warning.style.display = "block";
   } else {
     warning.style.display = "none";
   }
+
+  const element = document.getElementById("myBar");
+
+  if (percentage < 50) {
+    element.style.background = "linear-gradient(90deg, #6f4e37, #8b5e3c)";
+  } else if (percentage < 80) {
+    element.style.background = "linear-gradient(90deg, #c68b59, #d9a066)";
+  } else {
+    element.style.background = "linear-gradient(90deg, #d9534f, #b52b27)";
+  }
+
+  element.style.width = cappedPercentage + "%";
+
 }
 
 displayStats()
@@ -109,7 +125,6 @@ async function fetchPresets() {
 
     return presets
 }
-
 async function loadPresets() {
 
   const presets = await fetchPresets()
@@ -122,5 +137,5 @@ async function loadPresets() {
     });
   
 }
-
-loadPresets()
+loadPresets();
+displayStats();
