@@ -19,7 +19,7 @@ async function formSubmission (event){
     const input = Object.fromEntries(formData)
     const inputJSON = JSON.stringify(input)
 
-    const post = await fetch(`${dbURL}//api/drinks`, {
+    const post = await fetch(`${dbURL}/api/drinks`, {
     headers: {
       "Content-Type" : "application/json"
     },
