@@ -108,7 +108,7 @@ router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
     const result = await pool.query(
-      "DELETE FROM intake_logs WHERE id = £1 RETURNING *",
+      "DELETE FROM intake_logs WHERE id = $1 RETURNING *",
       [id],
     );
 
@@ -145,4 +145,5 @@ router.get("/stats/today", async (req, res) => {
 });
 
 export default router;
+
 
