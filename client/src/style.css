@@ -78,6 +78,22 @@ button:hover {
   border-left: 5px solid #6f4e37;
 }
 
+#coffeeProgress {
+    width: 100%;
+    background-color:#ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 10px;
+    margin: 1rem 0;
+}
+
+#myBar {
+    width: 1%;
+    height: 100%;
+    background-color: #513e2f;
+    border-radius: 12px;
+    transition: width 0.1s ease-in-out;
+}
 
 
 
