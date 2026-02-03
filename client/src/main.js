@@ -73,7 +73,9 @@ async function fetchPresets() {
 
 
     return presets
- const dailyLimit = 400;
+}
+
+const dailyLimit = 400;
 let i = 0;
 
 function move() {
