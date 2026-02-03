@@ -59,7 +59,7 @@ async function fetchStats() {
 
 async function displayStats() {
   const stats = await fetchStats();
-  TotalMgDisplay.textContent = stats.total_caffeine;
+  totalMgDisplay.textContent = stats.total_caffeine;
 
   if (stats.total_caffeine > 400) {
     warning.style.display = "block";
