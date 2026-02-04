@@ -67,6 +67,12 @@ async function formSubmission (event){
 
 form.addEventListener(`submit`,formSubmission)
 
+async function deleteDrink(id) {
+  await fetch (`${dbURL}/api/drinks/${id}`, {
+    method: "DELETE"
+  });
+}
+
 async function displayDrinks() {
   const drinks = await fetchDrinks();
   entries.innerHTML = "";
@@ -74,13 +80,28 @@ async function displayDrinks() {
   drinks.forEach((drink) => {
     const entry = document.createElement("div");
     entry.classList.add("entry");
-    entry.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
-    entries.appendChild(entry);
+
+  const text = document.createElement('span');
+  text.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '✖';
+  deleteBtn.classList.add('delete-btn');
+
+  deleteBtn.addEventListener('click', async ()=> {
+    await deleteDrink(drink.id); 
+    displayDrinks();
+    displayStats();
+  });
+  entry.appendChild(text);
+  entry.appendChild(deleteBtn);
+  entries.appendChild(entry);
   });
 }
 
 displayDrinks();
 
+const dailyLimit = 400;
 
 async function fetchStats() {
   const data = await fetch(`${dbURL}/api/drinks/stats/today`);
@@ -93,14 +114,28 @@ async function displayStats() {
   const stats = await fetchStats();
   totalMgDisplay.textContent = stats.total_caffeine;
 
-  if (stats.total_caffeine > 400) {
+  const percentage = (stats.total_caffeine / dailyLimit) * 100;
+  const cappedPercentage = Math.min (percentage, 100)
+
+  if (percentage >= 100) {
     warning.style.display = "block";
   } else {
     warning.style.display = "none";
   }
-}
 
-displayStats()
+  const element = document.getElementById("myBar");
+
+  if (percentage < 50) {
+    element.style.background = "linear-gradient(90deg, #6f4e37, #8b5e3c)";
+  } else if (percentage < 80) {
+    element.style.background = "linear-gradient(90deg, #c68b59, #d9a066)";
+  } else {
+    element.style.background = "linear-gradient(90deg, #d9534f, #b52b27)";
+  }
+
+  element.style.width = cappedPercentage + "%";
+
+}
 
 async function fetchPresets() {
     const data = await fetch(`${dbURL}/api/drinks/presets`);
@@ -109,7 +144,6 @@ async function fetchPresets() {
 
     return presets
 }
-
 async function loadPresets() {
 
   const presets = await fetchPresets()
@@ -117,10 +151,10 @@ async function loadPresets() {
     presets.forEach(drink => {
       const option = document.createElement("option");
       option.value = drink.id; 
-      option.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
+      option.textContent = `${drink.name} - ${drink.caffeine_mg} mg`;
       selectPreset.appendChild(option);
     });
   
 }
-
-loadPresets()
+loadPresets();
+displayStats();
