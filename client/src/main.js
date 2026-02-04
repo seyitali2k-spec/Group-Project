@@ -150,7 +150,7 @@ async function loadPresets() {
     presets.forEach(drink => {
       const option = document.createElement("option");
       option.value = drink.id; 
-      option.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
+      option.textContent = `${drink.name} - ${drink.caffeine_mg} mg`;
       selectPreset.appendChild(option);
     });
   
