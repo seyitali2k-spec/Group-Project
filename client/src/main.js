@@ -66,6 +66,12 @@ async function formSubmission (event){
 
 form.addEventListener(`submit`,formSubmission)
 
+async function deleteDrink(id) {
+  await fetch (`${dbURL}/api/drinks/${id}`, {
+    method: "DELETE"
+  });
+}
+
 async function displayDrinks() {
   const drinks = await fetchDrinks();
   entries.innerHTML = "";
@@ -73,8 +79,22 @@ async function displayDrinks() {
   drinks.forEach((drink) => {
     const entry = document.createElement("div");
     entry.classList.add("entry");
-    entry.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
-    entries.appendChild(entry);
+
+  const text = document.createElement('span');
+  text.textContent = `${drink.drink_name} - ${drink.caffeine_mg} mg`;
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '✖';
+  deleteBtn.classList.add('delete-btn');
+
+  deleteBtn.addEventListener('click', async ()=> {
+    await deleteDrink(drink.id); 
+    displayDrinks();
+    displayStats();
+  });
+  entry.appendChild(text);
+  entry.appendChild(deleteBtn);
+  entries.appendChild(entry);
   });
 }
 
@@ -115,8 +135,6 @@ async function displayStats() {
   element.style.width = cappedPercentage + "%";
 
 }
-
-displayStats()
 
 async function fetchPresets() {
     const data = await fetch(`${dbURL}/api/drinks/presets`);
