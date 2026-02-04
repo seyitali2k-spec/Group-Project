@@ -42,11 +42,11 @@ async function formSubmission (event){
   if (selectedPresetId) {
     
     submission = { drink_id: Number(selectedPresetId) };
-  } else if (input.drink_name && input.caffeine_mg) {
+  } else if (input.custom_name && input.custom_caffeine_mg) {
 
     submission = {
-      custom_name: input.drink_name,
-      custom_caffeine_mg: Number(input.caffeine_mg)
+      custom_name: input.custom_name,
+      custom_caffeine_mg: Number(input.custom_caffeine_mg)
     };
   } else {
     alert("Please select a drink or enter a custom drink!");
@@ -60,7 +60,6 @@ async function formSubmission (event){
     method: "POST",
     body: JSON.stringify(submission)
   })
-  window.location.reload()
 
 }
 
