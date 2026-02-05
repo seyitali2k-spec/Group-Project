@@ -3,7 +3,7 @@ import pool from "../db/connection.js";
 
 const router = express.Router();
 
-// GET all preset drinks (from drinks table)
+// GET all preset drinks (for dropdown)
 router.get("/presets", async (req, res) => {
   try {
     const result = await pool.query(
@@ -13,6 +13,24 @@ router.get("/presets", async (req, res) => {
   } catch (error) {
     console.error("Error getting presets:", error);
     res.status(500).json({ error: "Failed to get preset drinks" });
+  }
+});
+
+// GET today's stats (MOVED BEFORE the "/" route!)
+router.get("/stats/today", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        COALESCE(SUM(drinks.caffeine_mg), 0) as total_caffeine,
+        COUNT(intake_logs.id) as total_drinks
+      FROM intake_logs
+      JOIN drinks ON intake_logs.drink_id = drinks.id
+      WHERE DATE(intake_logs.consumed_at) = CURRENT_DATE
+    `);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error getting stats:", error);
+    res.status(500).json({ error: "Failed to get statistics" });
   }
 });
 
@@ -54,7 +72,7 @@ router.post("/", async (req, res) => {
       );
 
       if (existing.rows.length > 0) {
-        // Custom drink already exists, use its ID
+        // Custom drink already exists, use ID
         finalDrinkId = existing.rows[0].id;
       } else {
         // Create new custom drink
@@ -126,24 +144,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// GET daily caffeine statistics
-router.get("/stats/today", async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT 
-        COALESCE(SUM(drinks.caffeine_mg), 0) as total_caffeine,
-        COUNT(intake_logs.id) as drinks_consumed
-      FROM intake_logs
-      JOIN drinks ON intake_logs.drink_id = drinks.id
-      WHERE DATE(intake_logs.consumed_at) = CURRENT_DATE
-    `);
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error("Error getting stats:", error);
-    res.status(500).json({ error: "Failed to get statistics" });
-  }
-});
-
 export default router;
-
-
