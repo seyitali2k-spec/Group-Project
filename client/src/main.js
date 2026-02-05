@@ -42,7 +42,23 @@ defaultOption.textContent = "-- Select a drink --"
 selectPreset.appendChild(defaultOption)
 
 form.prepend(selectPreset);
-form.prepend(presetLabel);
+form.prepend(presetLabel); 
+
+selectPreset.addEventListener("change", () => {
+  const drinkNameInput = document.getElementById("drink_name");
+  const caffeineInput = document.getElementById("caffeine_mg");
+
+  if (selectPreset.value !== "") {
+    drinkNameInput.disabled = true;
+    caffeineInput.disabled = true;
+
+    drinkNameInput.value = "";
+    caffeineInput.value = "";
+  } else {
+    drinkNameInput.disabled = false;
+    caffeineInput.disabled = false;
+  }
+});
 
 async function formSubmission(event) {
     event.preventDefault()
