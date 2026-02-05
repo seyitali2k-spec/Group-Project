@@ -101,6 +101,7 @@ async function formSubmission(event) {
         // Reset the form
         form.reset();
         selectPreset.value = "";
+        selectPreset.dispatchEvent(new Event("change"));
         
     } catch (error) {
         showError("Unable to add drink. Please try again.");
